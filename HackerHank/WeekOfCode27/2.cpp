@@ -25,7 +25,6 @@ int main() {
 
 		amount += x;
 		qtd[x] = true;
-		cout << x << endl;
 	}
 
 	cout << amount << endl;
