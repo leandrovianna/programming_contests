@@ -1,52 +1,26 @@
 //11.25 pts - WA
+//2017-01-02 17:07 - Accepted
 #include <iostream>
 #include <vector>
+#include <algorithm>
 using namespace std;
 
-#define INF 1000000
-
 int main(){
-    int n,
-    	mini = INF,
-    	mini_i,
-    	old_mini,
-    	cont;
-
+	int n;
     cin >> n;
     vector<int> c(n);
     for(int c_i = 0; c_i < n; c_i++){
        cin >> c[c_i];
     }
-    
-    for (int i = 0; i < n; i++) {
-        if (c[i] < mini) {
-            mini = c[i];
-            mini_i = i;
-        }
-    }
-    
-    cont = 0;
-    for (int i = 0; i < n; i++) {
-        if (c[i] == mini) {
-            cont++;
-        }
-    }
 
-    c[mini_i] *= 2;
-    old_mini = mini;
-    mini = INF;
-    
-    for (int i = 0; i < n; i++) {
-        if (c[i] < mini) {
-            mini = c[i];
-            mini_i = i;
-        }
-    }
-    
-    if (old_mini != mini)
-        cout << mini << " " << cont << endl;
-    else
-        cout << old_mini << " " << cont << endl;
-    
+    sort(c.begin(), c.end());
+    if (c[0] != c[1]) { // tem minimal
+		c[0] *= 2;
+		sort(c.begin(), c.end());
+		
+		cout << c[0] << " " << 1 << endl;
+	} else { // varios minimos
+		cout << c[0] << " " << n << endl;
+	}
     return 0;
 }
