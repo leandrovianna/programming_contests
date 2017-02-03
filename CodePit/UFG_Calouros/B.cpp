@@ -1,3 +1,6 @@
+//Apanhando e Ganhando
+//https://www.urionlinejudge.com.br/repository/UOJ_1084.html
+//Accepted
 #include <iostream>
 #include <cstdio>
 #include <list>

@@ -1,4 +1,5 @@
 #!/bin/python3
+#TLE
 
 def substr(s1, s2, i, j):
     x = 1
