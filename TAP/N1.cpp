@@ -40,6 +40,7 @@ void bfs(int grid[][M], const int si, const int sj, const int n, const int m) {
 		}
 	}
 }
+
 int main() {
 	int k, n, m;
 	int grid[N][M];

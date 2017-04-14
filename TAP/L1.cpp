@@ -11,17 +11,22 @@ void which_way(uint64 n) {
 	bool count = false;
 
 	// cout << n << " " << bin << endl;
+	
+	if (n == 0)
+		qtd0 = 1;
+	else {
 
-	qtd1 = qtd0 = 0;
+		qtd1 = qtd0 = 0;
 
-	for (size_t i = 0; i < bin.size(); i++) {
-		if (bin[i] == '1') {
-			count = true;
-			qtd1++;
+		for (size_t i = 0; i < bin.size(); i++) {
+			if (bin[i] == '1') {
+				count = true;
+				qtd1++;
+			}
+
+			if (count && bin[i] == '0')
+				qtd0++;
 		}
-
-		if (count && bin[i] == '0')
-			qtd0++;
 	}
 
 	if (qtd0 > qtd1)
