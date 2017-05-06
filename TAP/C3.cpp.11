@@ -1,0 +1,37 @@
+#include <iostream>
+#include <string>
+#include <regex>
+using namespace std;
+
+int main() {
+	string s;
+	double total = 0;
+	regex number_regex(":[A-Za-z\\s]*[0-9\\.]+");
+	regex only_number("[0-9\\.]+");
+	smatch match, num_match;
+	vector<double> data;
+
+	while (getline(cin, s)) {
+		try {
+			while (regex_search(s, match, number_regex)) {
+				if (regex_search(match.str(), num_match, only_number))
+					data.push_back(stod(num_match.str()));
+
+				s = match.suffix();
+			}
+
+			if (data.size() == 2) {
+				total += data[0] * data[1];
+			}
+		}
+		catch (...) {
+			// ignored
+		}
+
+		data.clear();
+	}
+
+	cout << total << endl;
+
+	return 0;
+}
