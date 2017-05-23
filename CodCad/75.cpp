@@ -1,40 +1,48 @@
-//WA - 80 points
+// YES - 100 points
 #include <iostream>
 #include <cstring>
+#include <cstdlib>
+#include <vector>
+#include <set>
+#include <map>
+#include <queue>
 using namespace std;
 
-#define N (1010)
-#define MAX (1010)
+typedef long i32;
+typedef long long i64;
 
-int dp[MAX], a[N];
+#define N 1001000
+#define K 1010
 
-int recursion(int k, int n, int m) {
-	if (dp[k] != -1)
-		return dp[k];
+i32 dp[K], a[N];
+
+i32 solve(i32 n, i32 k, i32 m) {
+	if (dp[k] != -1) return dp[k];
 	else {
-		dp[k] = 0;
-		for (int i = 1; i <= n; i++) {
-			dp[k] += ((a[i] % m * recursion(k-i, n, m) % m) % m + m) % m;
+		i32 s = 0;
+		for (int i = 0; i < n; i++) {
+			s = (s % m + (a[i] * solve(n, k-i-1, m) % m) % m) % m;
 		}
-		dp[k] = dp[k] % m;
-		return dp[k];
+		return dp[k] = s % m;
 	}
 }
 
 int main() {
-	int n, k, m;
+	i32 n, k, m, x;
 
 	cin >> n >> k >> m;
-	for (int i = 1; i <= n; i++)
+	for (int i = 0; i < n; i++) {
 		cin >> a[i];
+	}
 
 	memset(dp, -1, sizeof(dp));
 
+	dp[0] = 1;
 	for (int i = 1; i <= n; i++) {
-		cin >> dp[i];
-		dp[i] = dp[i] % m;
+		cin >> x;
+		dp[i] = x % m;
 	}
 
-	cout << recursion(k, n, m) << endl;
+	cout << solve(n, k, m) % m << endl;
 	return 0;
 }
