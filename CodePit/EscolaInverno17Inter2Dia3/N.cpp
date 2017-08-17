@@ -1,4 +1,5 @@
 #include <iostream>
+#include <cstdio>
 #include <algorithm>
 #include <cstring>
 #include <cstdlib>
@@ -8,6 +9,7 @@
 #include <queue>
 #include <cmath>
 #include <stack>
+#include <limits>
 using namespace std;
 
 typedef short i16;
@@ -21,10 +23,52 @@ typedef vector<ii> vii;
 typedef vector<ll> vll;
 
 const int N = 1e5+10;
-const i64 INF = 1e18;
+const int L = 15; //log N
+const i64 INF = numeric_limits<long long>::max();
 
 vll g[N];
+i32 nivel[N];
+i32 pai[N];
+i32 ancestral[N][L];
 i64 dist[N];
+
+void dfs(int s) {
+
+	for (vll::iterator it = g[s].begin();
+			it != g[s].end(); it++) {
+		if (nivel[it->first] == -1) {
+			pai[it->first] = s;
+			nivel[it->first] = nivel[s] + 1;
+			dfs(it->first);
+		}
+	}
+
+}
+
+int lca(int a, int b) {
+
+	while (a != b) {
+		if (nivel[a] > nivel[b]) a = pai[a];
+		else b = pai[b];
+	}
+
+	return a;
+	// if (nivel[a] < nivel[b]) swap(a, b);
+    //
+	// for (int i = L-1; i >= 0; i--)
+	// 	if (nivel[a] - (1<<i) >= nivel[b])
+	// 		a = ancestral[a][i];
+    //
+	// if (a == b) return a;
+    //
+	// for (int i = L-1; i >= 0; i--)
+	// 	if (ancestral[a][i] != -1 && ancestral[a][i] != ancestral[b][i]) {
+	// 		a = ancestral[a][i];
+	// 		b = ancestral[b][i];
+	// 	}
+    //
+	// return ancestral[a][0];
+}
 
 void dijkstra(int s, int n) {
 	bool visited[N];
@@ -47,13 +91,11 @@ void dijkstra(int s, int n) {
 		i64 w = atual.first; 
 		int v = atual.second;
 
-		if (visited[v]) 
-			continue;
-
-		visited[v] = true; 
+		if (visited[v]) continue;
+		visited[v] = true;
 
 		for (vll::iterator it = g[v].begin(); it != g[v].end(); ++it) {
-			if (!visited[it->first] && dist[it->first] > w + it->second) { 
+			if (dist[it->first] > w + it->second) { 
 				dist[it->first] = w + it->second;
 				pq.push(ll(dist[it->first], it->first));
 			}
@@ -64,28 +106,52 @@ void dijkstra(int s, int n) {
 int main() {
 	int n, a, q, s, t;
 	i64 l;
-	
+	// ios::sync_with_stdio(false);
+
 	while (cin >> n, n) {
 		for (int i = 0; i < n; i++)
 			g[i].clear();
 		
 		for (int i = 1; i <= n-1; i++) {
-			cin >> a >> l;
+			// cin >> a >> l;
+			scanf("%d %lld", &a, &l);
 
 			g[i].push_back(ll(a, l));
 			g[a].push_back(ll(i, l));
 		}
 
-		cin >> q;
+		// vamos considerar 0 como a raiz
+
+		memset(nivel, -1, sizeof(nivel));
+		pai[0] = 0;
+		nivel[0] = 0; // nivel da raiz é 0
+		dfs(0); // chama dfs para preencher o nivel
+		dijkstra(0, n);
+		
+		for (int i = 0; i < N; i++)
+			memset(ancestral[i], -1, sizeof(ancestral[i]));
+
+		for (int i = 0; i < n; i++)
+			ancestral[i][0] = pai[i];
+		
+		for (int j = 0; j < L; j++)
+			for (int i = 0; i < n; i++)
+				if (ancestral[i][j-1] != -1)
+					ancestral[i][j] = ancestral[ancestral[i][j-1]][j-1];
+
+		// cin >> q;
+		scanf("%d", &q);
 		for (int i = 0; i < q; i++) {
-			cin >> s >> t;
+			// cin >> s >> t;
+			scanf("%d %d", &s, &t);
+			
+			i64 r = dist[s] + dist[t] - 2 * dist[lca(s,t)];
+			// cout << r;
+			printf("%lld", r);
 
-			dijkstra(s, n);
-			cout << dist[t];
-
-			if (i != q-1) cout << " ";
+			if (i != q-1) printf(" ");
 		}
-		cout << endl;
+		printf("\n");
 	}
 
 	return 0;
