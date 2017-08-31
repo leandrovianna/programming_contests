@@ -26,6 +26,7 @@ const int I[] = {0, 1, -1, 0};
 const int J[] = {-1, 0, 0, 1};
 
 int n, m, grid[N][N], dist[N][N];
+ii pai[N][N];
 
 iii piii(int w, int i, int j) {
 	return make_pair(w, make_pair(i, j));
@@ -40,6 +41,7 @@ void dijkstra(int si, int sj) {
 		for (int j = 0; j < m; j++)
 			dist[i][j] = INF, visited[i][j] = false;
 	dist[si][sj] = 0;
+	pai[si][sj] = ii(-1,-1);
 
 	int vi, vj, ni, nj;
 
@@ -58,6 +60,7 @@ void dijkstra(int si, int sj) {
 			if (0 <= ni && ni < n && 0 <= nj && nj < m
 				&& dist[ni][nj] > dist[vi][vj] + 1) {
 				dist[ni][nj] = dist[vi][vj] + 1;
+				pai[ni][nj] = ii(vi, vj);
 				queue.push(piii(-dist[ni][nj], ni, nj));
 			}
 		}
@@ -79,5 +82,11 @@ int main() {
 		cout << "IMPOSSIBLE" << endl;
 	else
 		cout << dist[n-1][m-1] << endl;
+
+	// ii p = pai[n-1][m-1];	
+	// while (p.first != -1) {
+	// 	cout << p.first << " " << p.second << endl;
+	// 	p = pai[p.first][p.second];
+	// }
 	return 0;
 }
