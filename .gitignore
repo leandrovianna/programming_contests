@@ -1,1 +1,6 @@
-*.in*
+*in*
+*input*
+*out*
+*output*
+*.swp*
+
