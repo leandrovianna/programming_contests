@@ -1,6 +1,7 @@
-*in*
+*.in*
+*in[0-9]+
 *input*
-*out*
+*.out*
 *output*
 *.swp*
 
