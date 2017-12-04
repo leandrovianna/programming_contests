@@ -11,7 +11,7 @@ func main() {
 		a, b = b, a
 	}
 
-	if b % a == 0 {
+	if b%a == 0 {
 		fmt.Println("Sao Multiplos")
 	} else {
 		fmt.Println("Nao sao Multiplos")

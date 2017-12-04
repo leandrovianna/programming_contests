@@ -6,17 +6,17 @@ import "fmt"
 func main() {
 	var h1, m1, h2, m2 int
 	fmt.Scan(&h1, &m1, &h2, &m2)
-	
-	t1 := h1 * 60 * 60 + m1 * 60
-	t2 := h2 * 60 * 60 + m2 * 60
 
-	d := t1 - t2
-	if d < 0 {
-		d += 24 * 60 * 60
+	dh := h2 - h1
+	if dh <= 0 {
+		dh += 24
 	}
 
-	h := d / (60 * 60)
-	d %= 60 * 60
+	dm := m2 - m1
+	if dm < 0 {
+		dm += 60
+		dh -= 1
+	}
 
-	fmt.Printf("O JOGO DUROU %d HORA(S) E %d MINUTO(S)\n", h, d)
+	fmt.Printf("O JOGO DUROU %d HORA(S) E %d MINUTO(S)\n", dh, dm)
 }

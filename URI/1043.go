@@ -7,7 +7,7 @@ func main() {
 	var a, b, c float64
 	fmt.Scan(&a, &b, &c)
 
-	if (a < b + c && b < a + c && c < a + b) {
+	if a < b+c && b < a+c && c < a+b {
 		perimetro := a + b + c
 		fmt.Printf("Perimetro = %.1f\n", perimetro)
 	} else {

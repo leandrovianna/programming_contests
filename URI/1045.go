@@ -19,16 +19,16 @@ func main() {
 		swap(&c, &a)
 	}
 
-	a2, b2, c2 := a * a, b * b, c * c
+	a2, b2, c2 := a*a, b*b, c*c
 
-	if a >= b + c {
+	if a >= b+c {
 		fmt.Println("NAO FORMA TRIANGULO")
 	} else {
-		if a2 == b2 + c2 {
+		if a2 == b2+c2 {
 			fmt.Println("TRIANGULO RETANGULO")
-		} else if a2 > b2 + c2 {
+		} else if a2 > b2+c2 {
 			fmt.Println("TRIANGULO OBTUSANGULO")
-		} else if a2 < b2 + c2 {
+		} else if a2 < b2+c2 {
 			fmt.Println("TRIANGULO ACUTANGULO")
 		}
 

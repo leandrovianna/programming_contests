@@ -22,14 +22,14 @@ func main() {
 	} else if p.Y == 0 {
 		fmt.Print("Eixo X\n")
 	} else {
-		if (p.X > 0) {
-			if (p.Y > 0) {
+		if p.X > 0 {
+			if p.Y > 0 {
 				qd = 1
 			} else {
 				qd = 4
 			}
 		} else {
-			if (p.Y > 0) {
+			if p.Y > 0 {
 				qd = 2
 			} else {
 				qd = 3
