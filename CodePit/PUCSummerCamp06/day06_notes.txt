@@ -1,0 +1,5 @@
+To do:
+OK  C (matrix exponential)
+	B (dp in tree)
+	D (mo)
+	H (sqrt decomposition)

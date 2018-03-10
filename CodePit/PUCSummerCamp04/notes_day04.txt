@@ -1,0 +1,7 @@
+To do:
+	C (kadane 3d)	
+	F (dp)
+	I (probability)
+	A (align, min cost max flow)
+	H (tree dp)
+	E (Aho Corasick)

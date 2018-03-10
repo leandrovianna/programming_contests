@@ -1,0 +1,6 @@
+To do:
+	B, D (lca)
+	F (Fenwick 2d maximum)
+	G (Kadane 2d)
+	E (Max Matching) OK
+	I (Fenwick) OK

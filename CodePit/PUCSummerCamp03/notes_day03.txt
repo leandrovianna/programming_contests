@@ -1,0 +1,6 @@
+To do:
+	D (min cost max flow)
+	C (max flow)
+	I (dp with bitmask)
+	A (lca)
+	J (dp with trie)

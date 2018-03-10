@@ -1,0 +1,9 @@
+To do:
+	A (segtree)
+	D (min cost max flow bipartite max flow = n * k)
+OK	F (string hash)
+	I (trie add words in morse code and use DP)
+	J (Dp how many numbers less than or equal to x, binary search)
+	E (Mo with heap)
+	H (knuth optimizations)
+	C (lca, tree linearization and lower_bound)
