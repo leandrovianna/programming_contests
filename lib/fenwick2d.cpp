@@ -33,7 +33,6 @@ int sum(int x1, int y1, int x2, int y2) {
 }
 
 int main() {
-	ios::sync_with_stdio(false);
-
-	return 0;
+    ios::sync_with_stdio(false);
+    return 0;
 }
