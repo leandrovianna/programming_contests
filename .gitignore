@@ -4,3 +4,4 @@ out*
 *.in*
 *.out*
 *neomake*
+*.orig*
