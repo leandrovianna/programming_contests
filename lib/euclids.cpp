@@ -1,4 +1,4 @@
-// Euclids Algorithm
+// Euclids Algorithm and Modular Multiplicative Inverse
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -10,6 +10,11 @@ pair<int, int> extendedEuclids(int a, int b) {
         return {p.second,
             p.first - floor((double)a / b) * p.second};
     }
+}
+
+int inverseMod(int a, int n) {
+    auto p = extendedEuclids(a, n);
+    return (p.first % n + n) % n;
 }
 
 int main() {
