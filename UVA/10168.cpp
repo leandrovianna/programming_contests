@@ -5,6 +5,7 @@ using namespace std;
 const int M = 10000010;
 bool notprime[M];
 void sieve(vector<int> &primes, int n) {
+    assert(n < M);
     notprime[0] = notprime[1] = true;
     for (int64_t i = 2; i <= n; i++) {
         if (!notprime[i]) {

@@ -12,8 +12,8 @@ Matrix matMul(Matrix a, Matrix b, int64_t m) {
 	for (i = 0; i < MAX_N; i++)
 		for (j = 0; j < MAX_N; j++)
 			for (ans.mat[i][j] = k = 0; k < MAX_N; k++)
-				ans.mat[i][j] = (ans.mat[i][j] +
-						((a.mat[i][k] % m * b.mat[k][j] % m) % m)) % m;
+			    ans.mat[i][j] = (ans.mat[i][j] +
+			            (a.mat[i][k] * b.mat[k][j]) % m) % m;
 
 	return ans;
 }
@@ -21,9 +21,12 @@ Matrix matMul(Matrix a, Matrix b, int64_t m) {
 Matrix matPow(Matrix base, int64_t p, int64_t m) {
 	Matrix ans;
 	int i, j;
-	for (i = 0; i < MAX_N; i++)
-		for (j = 0; j < MAX_N; j++)
+	for (i = 0; i < MAX_N; i++) {
+		for (j = 0; j < MAX_N; j++) {
 			ans.mat[i][j] = (i == j);
+			base.mat[i][j] %= m;
+        }
+    }
 
 	while (p) {
 		// iterative version of Divide & Conquer exponentiation

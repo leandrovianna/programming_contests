@@ -4,9 +4,13 @@ using namespace std;
 namespace UF {
 	const int N = 1010;
 	int parent[N];
-	void init(int sz) {
-		for (int i = 0; i < sz; i++)
+	int sz[N];
+	void init(int size) {
+	    assert(size < N);
+		for (int i = 0; i < size; i++) {
 			parent[i] = i;
+			sz[i] = 1;
+        }
 	}
 	int find(int x) {
 		if (parent[x] == x) return x;
@@ -16,8 +20,13 @@ namespace UF {
 		x = find(x);
 		y = find(y);
 
-		if (x != y)
-			parent[x] = y;
+        if (sz[x] < sz[y]) {
+            parent[x] = y;
+            sz[y] += sz[x];
+        } else {
+            parent[y] = x;
+            sz[x] += sz[y];
+        }
 	}
 }
 
