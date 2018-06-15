@@ -2,7 +2,7 @@
 using namespace std;
 
 namespace UF {
-	const int N = 1010;
+	const int N = 100 * 1000 + 10;
 	int parent[N];
 	int sz[N];
 	void init(int size) {
@@ -19,6 +19,8 @@ namespace UF {
 	void join(int x, int y) {
 		x = find(x);
 		y = find(y);
+
+		if (x == y) return;
 
         if (sz[x] < sz[y]) {
             parent[x] = y;

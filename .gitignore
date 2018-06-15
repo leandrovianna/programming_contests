@@ -5,3 +5,5 @@ out*
 *.out*
 *neomake*
 *.orig*
+node_modules
+package*.json
