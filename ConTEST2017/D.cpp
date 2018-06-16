@@ -95,10 +95,6 @@ int main() {
 			}
 		}
 
-		// d = 2^x^2 * 3^y^2 ...
-		// r = (x+1) * (y+1);
-		// r = (facts[0]+1) * (facts[1]+1) * ... * (facts[qtd-1]+1)
-
 		entries[i].r = 1;
 		for (int j = 0; j < qtd; j++) {
 			entries[i].r = (entries[i].r % MOD * (facts[j]+1) % MOD) % MOD;
