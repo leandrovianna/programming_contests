@@ -1,31 +1,15 @@
-#include <iostream>
-#include <iomanip>
-#include <cstdio>
-#include <algorithm>
-#include <cstring>
-#include <cstdlib>
-#include <vector>
-#include <set>
-#include <map>
-#include <queue>
-#include <cmath>
-#include <stack>
-#include <limits>
+#include <bits/stdc++.h>
 using namespace std;
 
-typedef short i16;
-typedef long i32;
-typedef long long i64;
-
 const int INF = numeric_limits<int>::max();
-const int64_t LLINF = numeric_limits<int64_t>::max();
+const int64_t LINF = 1000 * 1000 * 1000LL * 1000 * 1000 * 1000LL;
 const int V = 110; // number of vertex
 
 // augment - walk in augmented path and update flow
 // adj - adj matrix, p - parent of vertex i, t - sink
 int64_t augment(int64_t adj[][V], int p[], int t) {
 	int u = t;
-	int64_t minimum = LLINF;
+	int64_t minimum = LINF;
 
 	// find minimum flow in augmented path
 	while (p[u] != -1) {
@@ -49,13 +33,14 @@ int64_t edmonds_karp(int64_t adj[][V], const int s, const int t, const int n) {
 
 	int64_t mf = 0, // max flow answer
 			f = 1;
-	int dist[V];
+	int64_t dist[V];
 	int p[V];
 	int u;
 
 	while (f > 0) {
 		f = 0;
-		for (int i = 0; i < n; i++) dist[i] = INF, p[i] = -1;
+		for (int i = 0; i < n; i++)
+		    dist[i] = LINF, p[i] = -1;
 		dist[s] = 0;
 
 		queue<int> q;
@@ -69,8 +54,10 @@ int64_t edmonds_karp(int64_t adj[][V], const int s, const int t, const int n) {
 			if (u == t) break;
 
 			for (int v = 0; v < n; v++) {
-				if (adj[u][v] > 0 && dist[v] == INF) {
-					dist[v] = dist[u] + 1, q.push(v), p[v] = u;
+				if (adj[u][v] > 0 && dist[v] == LINF) {
+					dist[v] = dist[u] + 1;
+					q.push(v);
+					p[v] = u;
 				}
 			}
 		}

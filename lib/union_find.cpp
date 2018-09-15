@@ -76,5 +76,13 @@ struct union_find {
 int main() {
 	ios::sync_with_stdio(false);
 
+	int n;
+	cin >> n;
+
+    UF::init(n);
+
+    union_find uf;
+    uf.init(n);
+
 	return 0;
 }

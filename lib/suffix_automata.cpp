@@ -98,9 +98,65 @@ int64_t lcs(SuffixAutomaton &sa, string t) {
         }
     }
 
-    //cout << t.substr(best_i-best+1, best) << endl;
+    cout << t.substr(best_i-best+1, best) << endl;
 
     return best;
+}
+
+void dfs(SuffixAutomaton &sa, vector<int64_t> &occur, vector<int64_t> &words, int st) {
+    if (occur[st] > 0)
+        return;
+
+    int64_t occ = 0, wrd = 0;
+
+    if (sa.term[st]) {
+        occ++;
+        wrd++;
+    }
+
+    for (const auto &p : sa.edges[st]) {
+        dfs(sa, occur, words, p.second);
+        occ += occur[p.second];
+        wrd += words[p.second] + occur[p.second];
+    }
+
+    occur[st] = occ;
+    words[st] = wrd;
+}
+
+string find_kth_substr(SuffixAutomaton &sa, int k) {
+    vector<int64_t> occur(sa.edges.size()), words(sa.edges.size());
+    dfs(sa, occur, words, 0);
+
+    // find kth substring
+
+    int st = 0;
+    string t = "";
+
+    int64_t prev_k = k;
+    while (k > 0) {
+        int64_t acc = 0, tmp;
+
+        for (const auto &p : sa.edges[st]) {
+            tmp = acc;
+            acc += words[p.second];
+            if (acc >= k) {
+                st = p.second;
+                k -= tmp + occur[p.second];
+                t += p.first;
+                break;
+            }
+        }
+
+        if (k == prev_k) {
+            t = "No such line.";
+            break;
+        }
+
+        prev_k = k;
+    }
+
+    return t;
 }
 
 int main() {
@@ -112,6 +168,9 @@ int main() {
     SuffixAutomaton am(s);
 
     cout << lcs(am, t) << "\n";
+
+    // find kth substring in lexicographical order
+    cout << find_kth_substr(am, 1) << endl;
     return 0;
 }
 
