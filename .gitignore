@@ -7,3 +7,10 @@ out*
 *.orig*
 node_modules
 package*.json
+*.aux
+*.bbl
+*.blg
+*.dvi
+*.log
+*.synctex.gz
+*.toc
