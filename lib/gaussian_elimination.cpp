@@ -1,51 +1,160 @@
+// Lib - Gaussian Elimination
+// UVA 11319 - Stupid Sequence
 #include <bits/stdc++.h>
 using namespace std;
 
-#define MAX_N 100
+const int N = 7, M = 7; // N variables, M equations
+const int INF = 1e9;
+const double EPS = 1e-9;
 
-struct AugmentedMatrix {
-	double mat[MAX_N][MAX_N + 1];
+struct Matrix {
+    double m[M][N+1];
+    double* operator[](size_t i) {
+        return m[i];
+    };
 };
-struct ColumnVector {
-	double vec[MAX_N];
+
+struct Vector {
+    double v[N];
+    double& operator[](size_t i) {
+        return v[i];
+    };
 };
 
-ColumnVector elimination(int n, AugmentedMatrix aug) {
-	ColumnVector x;
+// n variables, m equations
+// note: for reducing error, implicit pivoting can be used
+int elimination(Matrix &aug, int n, int m, Vector &ans) {
+    int where[N];
+    memset(where, -1, sizeof(where));
 
-	for (int j = 0, lgst; j < n-1; j++) {
-		// find the largest value of column j
-		lgst = j;
-		for (int i = j + 1; i < n; i++) {
-			if (fabs(aug.mat[i][j]) > fabs(aug.mat[lgst][j]))
-				lgst = i;
-		}
+    for (int col = 0, row = 0, lgst; col < n && row < m; col++) {
+        lgst = row;
+        for (int i = row+1; i < m; i++) {
+            if (fabs(aug.m[i][col]) > fabs(aug.m[lgst][col])) {
+                lgst = i;
+            }
+        }
 
-		// change to first row of elimination the row
-		// with largest value
+        if (fabs(aug.m[lgst][col]) < EPS) // independent variable or impossible system
+            continue;
 
-		for (int k = j; k < n; k++) {
-			swap(aug.mat[j][k], aug.mat[lgst][k]);
-		}
+        swap(aug.m[row], aug.m[lgst]);
 
-		// elimination phase
-		for (int i = j + 1; i < n; i++) {
-			for (int k = n; k >= j; k--) {
-				aug.mat[i][k] -= aug.mat[i][j] * aug.mat[j][k] / aug.mat[j][j];
-			}
-		}
-	}
+        where[col] = row; // assign a row for variable of column col
 
-	for (int j = n-1; j >= 0; j--) {
-		double t = 0.0;
-		for (int k = j+1; k < n; k++)
-			t += aug.mat[j][k] * x.vec[k]; //back substitution
-		x.vec[j] = (aug.mat[j][n] - t) / aug.mat[j][j];
-	}
+        // zero elements in column col (except in row)
+        for (int i = 0; i < m; i++) {
+            if (i == row) continue;
 
-	return x;
+            double c = aug.m[i][col] / aug.m[row][col];
+
+            for (int j = col; j <= n; j++) {
+                aug.m[i][j] -= aug.m[row][j] * c;
+            }
+        }
+
+        row++;
+    }
+
+    // assign answer to variables
+    memset(ans.v, 0, sizeof(ans.v));
+    for (int j = 0; j < n; j++) {
+        if (where[j] != -1) {
+            ans.v[j] = aug.m[where[j]][n] / aug.m[where[j]][j];
+        }
+    }
+    
+    // verify if system is impossible
+    for (int i = 0; i < m; i++) {
+        double sum = 0;
+        for (int j = 0; j < n; j++) {
+            sum += (ans.v[j] * aug.m[i][j]);
+        }
+
+        if (fabs(sum - aug.m[i][n]) > EPS) {
+            return 0; // impossible system
+        }
+    }
+
+    for (int j = 0; j < n; j++) {
+        if (where[j] == -1) // infinite solutions
+            return INF;
+    }
+
+    return 1;
 }
 
 int main() {
-	return 0;
+    int t;
+    int n = 7;
+    const int Z = 1500;
+    uint64_t v, ans2[N], y[Z];
+
+    Matrix aug;
+    Vector ans;
+
+    cin >> t;
+    while (t--) {
+        for (int i = 0; i < n; i++) {
+            v = 1;
+            for (int j = 0; j < n; j++) {
+                aug[i][j] = v;
+                v *= (i+1);
+            }
+        }
+
+        for (int i = 0; i < Z; i++) {
+            cin >> y[i];
+        }
+
+        for (int i = 0; i < n; i++) {
+            aug[i][n] = y[i];
+        }
+
+        bool has_solution = true;
+
+        if (elimination(aug, n, n, ans) != 1) {
+            has_solution = false;
+        } else {
+            for (int j = 0; j < n; j++) {
+                if (ans[j] < -EPS) {
+                    // it is negative
+                    has_solution = false;
+                    break;
+                }
+
+                ans2[j] = static_cast<uint64_t>(ans[j] + EPS);
+
+                if (ans2[j] > 1000) {
+                    // greater than 1000
+                    has_solution = false;
+                    break;
+                }
+            }
+
+            // verify if ans2 vector generate the results of function of input
+            for (int i = 0; i < 1500; i++) {
+                uint64_t f = 0;
+                v = 1;
+                for (int j = 0; j < n; j++) {
+                    f += ans2[j] * v;
+                    v *= (i+1);
+                }
+
+                if (f != y[i]) {
+                    has_solution = false;
+                    break;
+                }
+            }
+        }
+
+        if (has_solution) {
+            for (int j = 0; j < n; j++) {
+                cout << ans2[j] << " \n"[j == n-1];
+            }
+        } else {
+            cout << "This is a smart sequence!" << endl;
+        }
+    }
+    return 0;
 }
