@@ -56,6 +56,7 @@ columns=fullflexible}
 \includefile{Augmenting Path}{../lib}{augmenting_path.cpp}
 \includefile{Combinations}{../lib}{combinations.cpp}
 \includefile{Debug message}{../lib}{debug_msg.cpp}
+\includefile{Dinic (Max Flow)}{../lib}{dinic.cpp}
 \includefile{Euler Tour}{../lib}{euler_tour.cpp}
 \includefile{Extended Euclids}{../lib}{extended_euclids.cpp}
 \includefile{Fenwick 2D}{../lib}{fenwick2d.cpp}
@@ -65,6 +66,7 @@ columns=fullflexible}
 \includefile{Generate all combinations}{../lib}{gen_combinations.cpp}
 \includefile{Geometry}{../lib}{geometry_cp3.cpp}
 \includefile{Getchar unlocked}{../lib}{getchar_unlocked.cpp}
+\includefile{Grundy Number}{../lib}{grundy_number.cpp}
 \includefile{Kruskal}{../lib}{kruskal.cpp}
 \includefile{LCA}{../lib}{lca.cpp}
 \includefile{LIS}{../lib}{lis.cpp}
@@ -74,14 +76,13 @@ columns=fullflexible}
 \includefile{Max Flow}{../lib}{max_flow.cpp}
 \includefile{Min Cost Max Flow}{../lib}{min_cost_max_flow.cpp}
 \includefile{Mo's Algorithm}{../lib}{mo.cpp}
+\includefile{Policy-based set}{../lib}{ordered_set.cpp}
 \includefile{Random Numbers}{../lib}{random_numbers.cpp}
 \includefile{Sieve}{../lib}{sieve.cpp}
 \includefile{Suffix Automata}{../lib}{suffix_automata.cpp}
-\subsection{Applications}
-Problem: Find whether a given string w is a substring of s.
-
+\subsection{Suffix Automata's Applications}
+Problem: Find whether a given string w is a substring of s.\\
 Solution: Simply run the automaton.
-
 \begin{verbatim}
 SuffixAutomaton a(s);
 bool fail = false;
@@ -96,28 +97,22 @@ for(int i=0;i<w.size();i++) {
 if(!fail) cout << w << " is a substring of " << s << "\n";
 \end{verbatim}
 
-Problem: Find whether a given string w is a suffix of s.
-
+Problem: Find whether a given string w is a suffix of s.\\
 Solution: Construct the list of terminal states, run the automaton as above and check in the end if the n is among the terminal states.
-
 Let's now look at the dp problems.
 
-Problem: Count the number of distinct substrings in s.
-
+Problem: Count the number of distinct substrings in s.\\
 Solution: The number of distinct substrings is the number of different paths in the automaton. These can be calculated recursively by calculating for each node the number of different paths starting from that node. The number of different paths starting from a node is the sum of the corresponding numbers of its direct successors, plus 1 corresponding to the path that does not leave the node.
 
-Problem: Count the number of times a given word w occurs in s.
-
+Problem: Count the number of times a given word w occurs in s.\\
 Solution: Similar to the previous problem. Let p be the node in the automaton that we end up while running it for w. This time the number of times a given word occurs is the number of paths starting from p and ending in a terminal node, so one can calculate recursively the number of paths from each node ending in a terminal node.
 
-Problem: Find where a given word w occurs for the first time in s.
-
+Problem: Find where a given word w occurs for the first time in s.\\
 Solution: This is equivalent to calculating the longest path in the automaton after reaching the node p (defined as in the previous solution).
 
 Finally let's consider the following problem where the suffix links come handy.
 
-Problem: Find all the positions where a given word w occurs in s.
-
+Problem: Find all the positions where a given word w occurs in s.\\
 Solution: Prepend the string with some symbol '\$' that does not occur in the string and construct the suffix automaton. Let's then add to each node of the suffix automaton its children in the suffix tree:
 
 \begin{verbatim}
@@ -130,5 +125,6 @@ for(int i=0;i<link.size();i++) {
 Now find the node p corresponding to the node w as has been done in the previous problems. We can then dfs through the subtree of the suffix tree rooted at p by using the children vector. Once we reach a leaf, we know that we have found a prefix of s that ends in w, and the length of the leaf can be used to calculate the position of w. All of the dfs branches correspond to different prefixes, so no unnecessary work is done and the complexity is $O(|s| + |w| + size of output)$.
 
 \includefile{Union Find}{../lib}{union_find.cpp}
+\includefile{XOR Gaussian Elimination}{../lib}{gaussian_elimination_xor.cpp}
 
 \end{document}
