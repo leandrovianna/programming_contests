@@ -1,120 +1,136 @@
+// Lib - Edmonds-Karp Algorithm
+// UVA - 820 - Network Bandwidth
 #include <bits/stdc++.h>
 using namespace std;
 
-const int INF = numeric_limits<int>::max();
-const int64_t LINF = 1000 * 1000 * 1000LL * 1000 * 1000 * 1000LL;
-const int V = 150; // number of vertex
+struct Edmonds {
+    static const int64_t inf = 1e18;
+    static const int V = 150;
+    int64_t adj[V][V];
+    vector<int> g[V];
+    int p[V]; // parent vector
+    int64_t dist[V];
+    int n, s, t;
 
-// augment - walk in augmented path and update flow
-// adj - adj matrix, p - parent of vertex i, t - sink
-int64_t augment(int64_t adj[][V], int p[], int t) {
-	int u = t;
-	int64_t minimum = LINF;
+    Edmonds(int n, int s, int t) : n(n), s(s), t(t) {
+        clear();
+    }
 
-	// find minimum flow in augmented path
-	while (p[u] != -1) {
-		minimum = min(adj[p[u]][u], minimum);
-		u = p[u];
-	}
+    void clear() {
+        for (int i = 0; i < n; i++)
+            g[i].clear();
+        memset(adj, 0, sizeof(adj));
+    }
 
-	// walk in augment path updating flow
-	u = t;
-	while (p[u] != -1) {
-		adj[p[u]][u] -= minimum;
-		adj[u][p[u]] += minimum;
-		u = p[u];
-	}
+    int64_t augmented() {
+        int u = t;
+        int64_t minimum = inf;
 
-	return minimum; // return minimum flow in augmented path
-}
+        // find minimum flow in augmented path
+        while (p[u] != -1) {
+            minimum = min(adj[p[u]][u], minimum);
+            u = p[u];
+        }
 
-// s - source, t - sink, n - number of vertex
-int64_t edmonds_karp(int64_t adj[][V], const int s, const int t) {
+        // walk in augment path updating flow
+        u = t;
+        while (p[u] != -1) {
+            adj[p[u]][u] -= minimum;
+            adj[u][p[u]] += minimum;
+            u = p[u];
+        }
 
-	int64_t mf = 0, // max flow answer
-			f = 1;
-	int64_t dist[V];
-	int p[V];
-	int u;
+        return minimum; // return minimum flow in augmented path
+    }
 
-	while (f > 0) {
-		f = 0;
-		for (int i = 0; i < V; i++)
-		    dist[i] = LINF, p[i] = -1;
-		dist[s] = 0;
+    int64_t flow() {
+        int64_t mf = 0, // max flow answer
+                f = 1;
+        int u;
 
-		queue<int> q;
-		q.push(s);
+        while (f > 0) {
+            f = 0;
+            for (int i = 0; i < n; i++)
+                dist[i] = inf, p[i] = -1;
+            dist[s] = 0;
 
-		while (!q.empty()) {
-			u = q.front();
-			q.pop();
+            queue<int> q;
+            q.push(s);
 
-			// stop if reach sink t
-			if (u == t) break;
+            while (!q.empty()) {
+                u = q.front();
+                q.pop();
 
-			for (int v = 0; v < V; v++) {
-				if (adj[u][v] > 0 && dist[v] == LINF) {
-					dist[v] = dist[u] + 1;
-					q.push(v);
-					p[v] = u;
-				}
-			}
-		}
+                // stop if reach sink t
+                if (u == t) break;
 
-		// verify if bfs stop when reach sink t
-		if (u == t) {
+                for (const auto &v : g[u]) {
+                    if (adj[u][v] > 0 && dist[v] == inf) {
+                        dist[v] = dist[u] + 1;
+                        q.push(v);
+                        p[v] = u;
+                    }
+                }
+            }
 
-			// find minimum flow in augmented path
-			f = augment(adj, p, t);
+            // verify if bfs stop when reach sink t
+            if (u == t) {
+                // find minimum flow in augmented path
+                f = augmented();
 
-			// update max flow of network
-			mf += f;
-		}
-	}
+                // update max flow of network
+                mf += f;
+            }
+        }
 
-	return mf;
-}
+        return mf;
+    }
 
-void add_edge(int64_t adj[][V], int v, int u, int64_t cap) {
-    adj[v][u] = cap;
-    adj[u][v] = 0;
-}
+    void add_edge(int v, int u, int64_t cap) {
+        adj[v][u] = cap;
+        adj[u][v] = 0;
+        g[v].push_back(u);
+        g[u].push_back(v);
+    }
 
-void add_bi_edge(int64_t adj[][V], int v, int u, int64_t cap) {
-    adj[v][u] = cap;
-    adj[u][v] = cap;
-}
+    void add_bi_edge(int v, int u, int64_t cap) {
+        adj[v][u] = cap;
+        adj[u][v] = cap;
+        g[v].push_back(u);
+        g[u].push_back(v);
+    }
 
-void inc_edge(int64_t adj[][V], int v, int u, int64_t cap) {
-    adj[v][u] += cap;
-}
+    void inc_edge(int v, int u, int64_t cap) {
+        if (adj[v][u] == 0)
+            g[v].push_back(u);
+        adj[v][u] += cap;
+    }
+};
 
 int main() {
 	ios::sync_with_stdio(false);
 		
 	int n, m, k;
 	int a, b, source, sink;
-	int64_t adj[V][V], c;
+	int64_t c;
 
 	k = 1;
 	while (cin >> n, n) {
-		// cleaning adj matrix
-        memset(adj, 0, sizeof(adj));
-            
 		cin >> source >> sink >> m;
 		source--;
 		sink--;
+
+		Edmonds edmonds(n, source, sink);
 
 		for (int i = 0; i < m; i++) {
 			cin >> a >> b >> c;
 			a--;
 			b--;
-			inc_edge(adj, a, b, c);
-			inc_edge(adj, b, a, c);
+			edmonds.inc_edge(a, b, c);
+			edmonds.inc_edge(b, a, c);
 		}
 
-		c = edmonds_karp(adj, source, sink);
+		c = edmonds.flow();
 		cout << "Network " << k << "\nThe bandwidth is " << c << ".\n\n";
 		k++;
 	}
