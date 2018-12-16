@@ -8,7 +8,7 @@ const int INF = 1e9;
 
 struct Matrix {
     bitset<N+1> m[M];
-    bitset<N+1> operator[](size_t i) {
+    bitset<N+1>& operator[](size_t i) {
         return m[i];
     };
 };
