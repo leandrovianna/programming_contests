@@ -21,6 +21,19 @@ void gen_sets(int l, int r, int depth) {
     }
 }
 
+void gen_sets2(int l, int r, int depth) {
+    if (depth == Q) return;
+
+    for (int i = l; i <= r; i++) {
+        if (i & (1 << depth))
+            sets[depth][0].push_back(i);
+        else
+            sets[depth][1].push_back(i);
+    }
+
+    gen_sets(l, r, depth + 1);
+}
+
 int main() {
     int t, n;
 
@@ -30,7 +43,7 @@ int main() {
         cin >> n;
 
         int answer = 0;
-        gen_sets(1, n, 0);
+        gen_sets2(1, n, 0);
 
         for (int q = 0, d; q < min(n-1, Q); q++) {
             size_t size1 = sets[q][0].size(), size2 = sets[q][1].size();
