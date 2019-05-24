@@ -68,6 +68,7 @@ columns=fullflexible}
 \includefile{Geometry}{../lib}{geometry_cp3.cpp}
 \includefile{Getchar unlocked}{../lib}{getchar_unlocked.cpp}
 \includefile{Grundy Number}{../lib}{grundy_number.cpp}
+\includefile{Hashing}{../lib}{string_hash.cpp}
 \includefile{Kruskal}{../lib}{kruskal.cpp}
 \includefile{Lowest Common Ancestor (LCA)}{../lib}{lca.cpp}
 \includefile{Longest Increasing Sequence (LIS)}{../lib}{lis.cpp}
@@ -124,6 +125,7 @@ for(int i=0;i<link.size();i++) {
 \end{verbatim}
 
 Now find the node p corresponding to the node w as has been done in the previous problems. We can then dfs through the subtree of the suffix tree rooted at p by using the children vector. Once we reach a leaf, we know that we have found a prefix of s that ends in w, and the length of the leaf can be used to calculate the position of w. All of the dfs branches correspond to different prefixes, so no unnecessary work is done and the complexity is $O(|s| + |w| + size of output)$.
+
 
 \includefile{Union Find}{../lib}{union_find.cpp}
 \includefile{XOR Gaussian Elimination}{../lib}{gaussian_elimination_xor.cpp}
