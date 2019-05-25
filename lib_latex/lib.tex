@@ -81,6 +81,7 @@ columns=fullflexible}
 \includefile{Policy-based set}{../lib}{ordered_set.cpp}
 \includefile{Random Numbers}{../lib}{random_numbers.cpp}
 \includefile{Sieve}{../lib}{sieve.cpp}
+\includefile{Strongly Connected Components}{../lib}{scc.cpp}
 \includefile{Suffix Automata}{../lib}{suffix_automata.cpp}
 \subsection{Suffix Automata's Applications}
 Problem: Find whether a given string w is a substring of s.\\
@@ -126,7 +127,7 @@ for(int i=0;i<link.size();i++) {
 
 Now find the node p corresponding to the node w as has been done in the previous problems. We can then dfs through the subtree of the suffix tree rooted at p by using the children vector. Once we reach a leaf, we know that we have found a prefix of s that ends in w, and the length of the leaf can be used to calculate the position of w. All of the dfs branches correspond to different prefixes, so no unnecessary work is done and the complexity is $O(|s| + |w| + size of output)$.
 
-
+\includefile{Topological Sort}{../lib}{topological_sort.cpp}
 \includefile{Union Find}{../lib}{union_find.cpp}
 \includefile{XOR Gaussian Elimination}{../lib}{gaussian_elimination_xor.cpp}
 
