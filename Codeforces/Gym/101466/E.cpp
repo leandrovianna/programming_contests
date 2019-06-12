@@ -1,8 +1,9 @@
-// String Hash - Polynomial rolling hash
+// Codeforces Gym - Text Editor - 101466E
+// solution with Double Hash
 #include <bits/stdc++.h>
 using namespace std;
 
-const int N = 200100;
+const int N = 100100;
 
 struct Hash {
     uint64_t p, mod, ppow[N], ppow2[N], p2, mod2;
@@ -32,28 +33,45 @@ struct Hash {
         r.second = (h[j+1].second - (h[i].second * ppow2[j-i+1]) % mod2 + mod2) % mod2;
         return r;
     }
-};
-
-template<typename T>
-ostream& operator<<(ostream& os, pair<T, T> p) {
-    os << "(" << p.first << ", " << p.second << ")";
-    return os;
-}
-
-Hash h1, h2;
-string s1, s2;
+} h, h2;
 
 int main() {
-    ios::sync_with_stdio(false);
-    cin.tie(nullptr);
+    string a, b;
+    int n;
 
-    s1 = "abghABCDE";
-    s2 = "CD";
-    h1.init(s1);
-    h2.init(s2);
+    getline(cin, a);
+    getline(cin, b);
+    cin >> n;
 
-    cout << s1.substr(6, 2) << " == " << s2.substr(0, 2) << endl;
-    cout << h1.get_hash(6, 7) << " == " << h2.get_hash(0, 1) << endl;
+    int l = a.size();
+    int k = b.size();
 
+    h.init(a);
+    h2.init(b);
+
+    int lo = 0, hi = k, mid, ans = 0;
+
+    while (lo <= hi) {
+        mid = (lo + hi) / 2;
+
+        int cnt = 0;
+        for (int i = 0; i <= l-mid; i++) {
+            if (h.get_hash(i, i+mid-1) == h2.get_hash(0, mid-1)) {
+                cnt++;
+            }
+        }
+
+        if (cnt >= n) {
+            ans = mid;
+            lo = mid+1;
+        } else {
+            hi = mid-1;
+        }
+    }
+
+    if (ans == 0)
+        cout << "IMPOSSIBLE\n";
+    else
+        cout << b.substr(0, ans) << "\n";
     return 0;
 }
