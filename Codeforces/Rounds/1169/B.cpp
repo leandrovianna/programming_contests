@@ -1,4 +1,4 @@
-// Codeforces - Increasing by Modulo - 1169B Div2
+// Codeforces - Pairs - 1169B Div2
 #include <bits/stdc++.h>
 using namespace std;
 
