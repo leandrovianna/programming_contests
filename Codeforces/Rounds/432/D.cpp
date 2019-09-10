@@ -1,5 +1,4 @@
-// Suffix Automaton
-// LCS problem
+// Codeforces - Prefixes and Suffixes - 432D
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -173,17 +172,41 @@ string find_kth_substr(SuffixAutomaton &sa, int k) {
     return t;
 }
 
+SuffixAutomaton sa;
+int occurs[N], words[N];
+
 int main() {
     ios::sync_with_stdio(false);
-    string s, t;
+    cin.tie(nullptr);
+    string s;
 
-    cin >> s >> t;
+    cin >> s;
 
-    SuffixAutomaton am(s);
+    for (const auto &ch : s) {
+        sa.extend(ch);
+    }
+    sa.find_terminals();
 
-    cout << lcs(am, t) << "\n";
+    dfs(sa, occurs, words, 0);
 
-    // find kth substring in lexicographical order
-    cout << find_kth_substr(am, 1) << endl;
+    int l = 1, st = 0;
+    vector<pair<int, int>> answers;
+    for (const auto &ch : s) {
+        if (sa.edges[st][(int)ch] != -1) {
+            st = sa.edges[st][(int)ch];
+
+            if (sa.term[st]) {
+                answers.push_back({l, occurs[st]});
+            }
+        }
+
+        l++;
+    }
+
+    cout << answers.size() << "\n";
+    for (const auto &p : answers) {
+        cout << p.first << " " << p.second << "\n";
+    }
+
     return 0;
 }
