@@ -1,48 +1,81 @@
-//Lib - Matrix Power
+// Codeforces - Gym 101845 - Univ. Nacional de Colombia PC
+// Apple Trees
 #include <bits/stdc++.h>
 using namespace std;
 
-#define MAX_N 4
+const int MAXN = 5;
 
-struct Matrix { int64_t mat[MAX_N][MAX_N]; };
+struct matrix {
+    int64_t m[MAXN][MAXN];
+};
 
-Matrix matMul(Matrix a, Matrix b, int64_t m) {
-	Matrix ans;
-	int i, j, k;
-	for (i = 0; i < MAX_N; i++)
-		for (j = 0; j < MAX_N; j++)
-			for (ans.mat[i][j] = k = 0; k < MAX_N; k++)
-			    ans.mat[i][j] = (ans.mat[i][j] +
-			            (a.mat[i][k] * b.mat[k][j]) % m) % m;
-
-	return ans;
-}
-
-Matrix matPow(Matrix base, int64_t p, int64_t m) {
-	Matrix ans;
-	int i, j;
-	for (i = 0; i < MAX_N; i++) {
-		for (j = 0; j < MAX_N; j++) {
-			ans.mat[i][j] = (i == j);
-			base.mat[i][j] %= m;
+matrix mult(matrix a, matrix b, int64_t mod) {
+    matrix ans;
+    for (int i = 0; i < MAXN; i++) {
+        for (int j = 0; j < MAXN; j++) {
+            ans.m[i][j] = 0;
+            for (int k = 0; k < MAXN; k++) {
+                ans.m[i][j] += (a.m[i][k] * b.m[k][j]) % mod;
+            }
+            ans.m[i][j] %= mod;
         }
     }
 
-	while (p) {
-		// iterative version of Divide & Conquer exponentiation
-		// check if p is odd (last bit is on)
-		if (p & 1)
-			ans = matMul(ans, base, m);
+    return ans;
+}
 
-		base = matMul(base, base, m); // square the base
-		p >>= 1; // divide p by 2
-	}
+matrix power(matrix base, int64_t exp, int64_t mod) {
+    matrix ans;
+    for (int i = 0; i < MAXN; i++) {
+        for (int j = 0; j < MAXN; j++) {
+            ans.m[i][j] = (i == j) ? 1 : 0;
+            base.m[i][j] %= mod;
+        }
+    }
 
-	return ans;
+    while (exp) {
+        if (exp & 1) {
+            ans = mult(ans, base, mod);
+        }
+
+        base = mult(base, base, mod);
+
+        exp >>= 1;
+    }
+
+    return ans;
 }
 
 int main() {
-	ios::sync_with_stdio(false);
+    const int64_t mod = 1000000007;
+    int64_t n;
 
-	return 0;
+    cin >> n;
+
+    if (n < 10) {
+        cout << "1\n";
+        return 0;
+    }
+
+    matrix a = {{{16, 9, 4, 1, 0},
+                 {1, 0, 0, 0, 0},
+                 {0, 1, 0, 0, 0},
+                 {0, 0, 1, 0, 0},
+                 {0, 0, 0, 1, 0} }};
+
+    a = power(a, n/10, mod);
+
+    int64_t ans = 0;
+    for (int i = 0; i < 4; i++) {
+        ans += a.m[i][0];
+        ans %= mod;
+    }
+
+    if (n % 10 < 5) {
+        ans += a.m[4][0];
+        ans %= mod;
+    }
+
+    cout << ans << "\n";
+    return 0;
 }

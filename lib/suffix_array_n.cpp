@@ -33,7 +33,7 @@ static void radixPass(int* a, int* b, int* r, int n, int K) {// count occurrence
     delete [] c;
 }
  
-// find the suffix array SA of s[0..n-1] in {1..K}ˆn
+// find the suffix array SA of s[0..n-1] in {1..K}^n
 // require s[n]=s[n+1]=s[n+2]=0, n>=2
 void suffixArray(int* s, int* SA, int n, int K) {
     s[n] = s[n+1] = s[n+2] = 0;
@@ -95,20 +95,64 @@ void suffixArray(int* s, int* SA, int n, int K) {
     delete [] s12; delete [] SA12; delete [] SA0; delete [] s0;
 }
 
-int sa[N], t[N];
+void lcp_construction(int *s, int n, int *sa, int *rnk, int *lcp) {
+	for (int i = 0; i < n; i++) {
+		rnk[sa[i]] = i;
+	}
+
+	int k = 0;
+	for (int i = 0; i < n-1; i++) {
+		lcp[i] = 0;
+	}
+
+	for (int i = 0; i < n; i++) {
+		if (rnk[i] == n - 1) {
+			k = 0;
+			continue;
+		}
+
+		int j = sa[rnk[i] + 1];
+		while (i + k < n && j + k < n && s[i+k] == s[j+k])
+			k++;
+		lcp[rnk[i]] = k;
+		if (k) k--;
+	}
+}
+
+int sa[N], t[N], revsa[N], lcp[N];
 char s[N];
 
 int main() {
-    cin >> s;
+    int n;
 
-    for (size_t i = 0; i < strlen(s); i++) {
-        t[i] = s[i];
-    }
+    scanf("%d", &n);
 
-    suffixArray(t, sa, strlen(s), M);
+    for (int i = 0; i < n; i++) {
+        int64_t m = 0;
+        scanf("%s", s);
+        m = strlen(s);
 
-    for (size_t i = 0; i < strlen(s); i++) {
-        cout << sa[i] << "\n";
+        for (int i = 0; i < m; i++) {
+            t[i] = s[i];
+        }
+
+        suffixArray(t, sa, m, M);
+        lcp_construction(t, m, sa, revsa, lcp);
+
+        /*
+        for (size_t i = 0; i < strlen(s); i++) {
+            cout << sa[i] << "\n";
+        }
+        */
+
+        int64_t ans = (m * m + m) / 2;
+
+        for (int i = 0; i < m-1; i++) {
+            ans -= lcp[i];
+        }
+
+        cout << ans << "\n";
     }
     return 0;
 }
+
