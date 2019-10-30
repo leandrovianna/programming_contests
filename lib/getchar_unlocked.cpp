@@ -1,6 +1,11 @@
 #include <bits/stdc++.h>
 using namespace std;
 
+#ifdef __WIN32__
+#define getchar_unlocked getchar
+#define putchar_unlocked putchar
+#endif
+
 bool readChar(char &c) {
 	c = getchar_unlocked();
 	return c != EOF;
