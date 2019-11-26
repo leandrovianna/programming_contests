@@ -34,6 +34,11 @@ int augment(int v) {
 }
  
 int matching(int left_sz) {
+    mt19937 rng(chrono::steady_clock::now().time_since_epoch().count());
+    for (int i = 0; i < N; i++) {
+        shuffle(g[i].begin(), g[i].end(), rng);
+    }
+
 	memset(match, -1, sizeof(match));
 	memset(lmatch, -1, sizeof(lmatch));
  
