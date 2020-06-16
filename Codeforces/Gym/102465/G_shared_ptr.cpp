@@ -1,11 +1,13 @@
 // Codeforces - Strings - 102465G
+// This solution use shared_ptr
+// Needs remove Ropes to pass Memory Limit (256MB)
 #include <bits/stdc++.h>
 using namespace std;
 
 const int MOD = 1000000007;
 
 class Rope {
-  const Rope *left, *right;
+  shared_ptr<const Rope> left, right;
   int64_t len; // length of the string
   int64_t w; // length of the left child's string 
 
@@ -16,7 +18,6 @@ class Rope {
   Rope() {
     len = w = sum = 0;
     data = "";
-    left = right = nullptr;
   }
 
   Rope(string data) : data(data) {
@@ -26,10 +27,9 @@ class Rope {
       sum %= MOD;
     }
     len = w = data.size();
-    left = right = nullptr;
   }
 
-  Rope(const Rope *left, const Rope *right) {
+  Rope(shared_ptr<const Rope> left, shared_ptr<const Rope> right) {
     this->left = left;
     this->right = right;
     this->len = 0;
@@ -52,29 +52,29 @@ class Rope {
     return left == nullptr && right == nullptr;
   }
 
-  const Rope* copy(int i, int j) const {
-    return new Rope(data.substr(i, j - i + 1));
+  shared_ptr<const Rope> copy(int i, int j) const {
+    return make_shared<const Rope>(data.substr(i, j - i + 1));
   }
 
-  const Rope* copy() const {
-    return new Rope(data);
+  shared_ptr<const Rope> copy() const {
+    return make_shared<const Rope>(data);
   }
 
-  const Rope* substr(int64_t i, int64_t j) const {
-    if (i > j) return new Rope();
+  shared_ptr<const Rope> substr(int64_t i, int64_t j) const {
+    if (i > j) return make_shared<const Rope>();
 
     if (i == 0 && j == this->len-1) {
       if (isLeaf())
         return copy();
       else
-        return new Rope(left, right);
+        return make_shared<const Rope>(left, right);
     }
 
     if (isLeaf()) {
       return copy(i, j);
     }
 
-    const Rope *l = nullptr, *r = nullptr;
+    shared_ptr<const Rope> l, r;
 
     if (i < w && left) {
       l = left->substr(i, min(w-1, j));      
@@ -84,7 +84,7 @@ class Rope {
       r = right->substr(max(i - w, int64_t{0}), j - w);
     }
 
-    return new Rope(l, r);
+    return make_shared<const Rope>(l, r);
   }
 
   int report() const {
@@ -95,7 +95,6 @@ class Rope {
     return len;
   }
 };
-
 
 int main() {
   ios::sync_with_stdio(false);
@@ -108,19 +107,53 @@ int main() {
   string s;
   cin >> s;
 
-  vector<const Rope*> roots;
-  roots.push_back(new Rope(s));
+  vector<shared_ptr<const Rope>> roots;
+  roots.push_back(make_shared<const Rope>(s));
 
   int64_t lo, hi;
+  vector<tuple<int, int, int64_t, int64_t>> queries;
+
+  const int N = 2510;
+  int cnt[N];
+  cnt[0] = 0;
+
   for (int i = 1, x, y; i < n; i++) {
+    cnt[i] = 0;
+
     cin >> s;
     if (s == "SUB") {
       cin >> x >> lo >> hi;
-      roots.push_back(roots[x]->substr(lo, hi-1));
+      queries.emplace_back(x, -1, lo, hi);
+      cnt[x]++;
     } else {
       cin >> x >> y;
-      roots.push_back(new Rope(roots[x], roots[y]));
+      cnt[x]++;
+      cnt[y]++;
+      queries.emplace_back(x, y, 0, 0);
     }
+  }
+
+  for (int i = 1, x, y; i < n; i++) {
+    tie(x, y, lo, hi) = queries[i-1];
+
+    if (y == -1) {
+      // SUB
+      roots.push_back(roots[x]->substr(lo, hi-1));
+      cnt[x]--;
+    } else {
+      // APP
+      roots.push_back(make_shared<const Rope>(roots[x], roots[y]));
+      cnt[x]--;
+      cnt[y]--;
+    }
+
+    // free'd roots that we will not use anymore
+
+    if (cnt[x] == 0)
+      roots[x] = shared_ptr<const Rope>();
+
+    if (y != -1 && cnt[y] == 0)
+      roots[y] = shared_ptr<const Rope>();
   }
 
   cout << roots[n-1]->report() << "\n";
