@@ -2,114 +2,83 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-const double PI = 3.14159265358979323846;
-const double EPS = 1e-9;
-
-struct point {
-    int x, y;
-    bool operator==(point &other) {
-        return this->x == other.x && this->y == other.y;
-    }
+template<typename T>
+struct Point {
+  T x, y;
+  Point() : x(0), y(0) {}
+  Point(T x, T y) : x(x), y(y) {}
+ 
+  Point operator+(Point p) const {
+    return {x + p.x, y + p.y};
+  }
+ 
+  Point operator-(Point p) const {
+    return {x - p.x, y - p.y};
+  }
+ 
+  Point operator*(T d) const {
+    return {x * d, y * d};
+  }
+ 
+  Point operator/(T d) const {
+    return {x / d, y / d};
+  }
+ 
+  template<typename S>
+  int sgn(S x) {
+    return (S(0) < x) - (x < S(0));
+  }
 };
-
-struct vec { 
-    double x, y;
-    vec(double _x, double _y) : x(_x), y(_y) {} 
-};
-
-// Note about polygons: vector<point> with
-// the first and last positions equals (same point)
-// is a polygon
-
-vec to_vec(point a, point b) {
-    return vec(b.x - a.x, b.y - a.y); 
+ 
+template<typename T>
+bool operator==(Point<T> a, Point<T> b) {
+  return a.x == b.x && a.y == b.y;
 }
-
-double dot(vec a, vec b) { 
-    return (a.x * b.x + a.y * b.y); 
+ 
+template<typename T>
+bool operator!=(Point<T> a, Point<T> b) {
+  return !(a == b);
 }
-
-double norm_sq(vec v) { 
-    return v.x * v.x + v.y * v.y; 
+ 
+template<typename T>
+T sq(Point<T> p) {
+  return p.x * p.x + p.y * p.y;
 }
-
-double cross(vec a, vec b) { 
-    return a.x * b.y - a.y * b.x; 
+ 
+template<typename T>
+double abs(Point<T> p) {
+  return sqrt(sq(p));
 }
-
-bool collinear(point p, point q, point r) {
-    return fabs(cross(to_vec(p, q), to_vec(p, r))) < EPS; 
+ 
+template<typename T>
+ostream& operator<<(ostream& os, Point<T> p) {
+  return os << "(" << p.x << ", " << p.y << ")";
 }
-
-double angle(point a, point o, point b) { 
-    vec oa = to_vec(o, a), ob = to_vec(o, b);
-    return acos(dot(oa, ob) / sqrt(norm_sq(oa) * norm_sq(ob))); 
+ 
+template<typename T>
+Point<T> translate(Point<T> v, Point<T> p) {
+  return p + v;
 }
-
-bool ccw(point p, point q, point r) {
-    return cross(to_vec(p, q), to_vec(p, r)) > 0; 
+ 
+template<typename T>
+Point<T> scale(Point<T> c, double factor, Point<T> p) {
+  return c + (p - c) * factor;
 }
-
-// ccw with support to collinear points
-bool coccw(point p, point q, point r) {
-    if (collinear(p, q, r))
-        return true;
-
-    return cross(to_vec(p, q), to_vec(p, r)) > 0; 
+ 
+template<typename T>
+Point<T> rotate(Point<T> p, double a) {
+  return {p.x * cos(a) - p.y * sin(a),
+          p.x * sin(a) + p.y * cos(a)};
 }
-
-double dist(point p1, point p2) {
-    return hypot(p1.x - p2.x, p1.y - p2.y); 
-}
-
-double area(const vector<point> &q) {
-    double result = 0.0, x1, y1, x2, y2;
-    for (int i = 0; i < (int)q.size()-1; i++) {
-        x1 = q[i].x; 
-        x2 = q[i+1].x;
-        y1 = q[i].y; 
-        y2 = q[i+1].y;
-        result += (x1 * y2 - x2 * y1);
-    }
-
-    return fabs(result) / 2.0; 
-}
-
-// check if point p is inside polygon p
-// restrictions: p can not be collinear 
-// with points of q
-bool inner(point p, vector<point> q) {
-    if (q.size() == 0) return false;
-
-    double sum = 0;
-    for (size_t i = 0; i < q.size()-1; i++) {
-        if (ccw(p, q[i], q[i+1])) {
-            sum += angle(q[i], p, q[i+1]);
-        } else {
-            sum -= angle(q[i], p, q[i+1]);
-        }
-    }
-
-    // fabs(sum) == 2 * PI
-    return fabs(fabs(sum) - 2 * PI) < EPS;
-}
-
-// check if point p is inside polygon q
-// p can be collinear to edges of polygon q
-bool inner2(point p, vector<point> q) {
-    double triangles_area = 0, total_area = area(q);
-
-    for (size_t i = 0; i < q.size()-1; i++) {
-        vector<point> t = {p, q[i], q[i+1], p};
-        triangles_area += area(t);
-    }
-
-    return fabs(triangles_area - total_area) < EPS;
+ 
+template<typename T>
+Point<T> perp(Point<T> p) {
+  return {-p.y, p.x};
 }
 
 int main() {
     int n;
-    vector<point> poly;
+    vector<Point<int>> poly;
 
     cin >> n;
     for (int i = 0, x, y; i < n; i++) {
@@ -117,6 +86,5 @@ int main() {
         poly.push_back({x, y});
     }
 
-    cout << "area: " << area(poly) << endl;
     return 0;
 }
