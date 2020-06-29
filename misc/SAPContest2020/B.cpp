@@ -3,60 +3,50 @@ using namespace std;
 
 const int N = 1001000;
 const int inf = 1e9;
+int seg[4*N][2];
 
-void build(int seg[], int idx, int l, int r) {
+void build(int idx, int l, int r, int s) {
   if (l == r)
-      seg[idx] = 0;
+      seg[idx][s] = 0;
   else {
     int mid = (l + r) >> 1;
-    build(seg, 2*idx+1, l, mid);
-    build(seg, 2*idx+2, mid+1, r);
-    seg[idx] = min(seg[2*idx+1], seg[2*idx+2]);
+    build(2*idx+1, l, mid, s);
+    build(2*idx+2, mid+1, r, s);
+    seg[idx][s] = min(seg[2*idx+1][s], seg[2*idx+2][s]);
   }
 }
 
-void update_seg(int seg[], int idx, int l, int r, int i, int v) {
+void update(int idx, int l, int r, int i, int v, int s) {
   if (i < l || i > r)
     return;
 
   if (l == r) {
-    seg[idx] = v;    
+    seg[idx][s] = v;    
   } else {
     int mid = (l + r) >> 1;
-    update_seg(seg, 2*idx+1, l, mid, i, v);
-    update_seg(seg, 2*idx+2, mid+1, r, i, v);
-    seg[idx] = min(seg[2*idx+1], seg[2*idx+2]);
+    update(2*idx+1, l, mid, i, v, s);
+    update(2*idx+2, mid+1, r, i, v, s);
+    seg[idx][s] = min(seg[2*idx+1][s], seg[2*idx+2][s]);
   }
 }
 
-int query_seg(int seg[], int idx, int l, int r, int i, int j) {
+int query(int idx, int l, int r, int i, int j, int s) {
   if (j < l || i > r)
     return inf;
 
   if (i <= l && r <= j)
-    return seg[idx];
+    return seg[idx][s];
   else {
     int mid = (l + r) >> 1;
     return min(
-        query_seg(seg, 2*idx+1, l, mid, i, j),
-        query_seg(seg, 2*idx+2, mid+1, r, i, j)
+        query(2*idx+1, l, mid, i, j, s),
+        query(2*idx+2, mid+1, r, i, j, s)
         );
   }
 }
 
 int n, m;
 int64_t skip[N], x, y;
-
-void update(int seg[], int i, int v) {
-  update_seg(seg, 0, 0, n+1, i, v);
-}
-
-int query(int seg[], int i, int j) {
-  return query_seg(seg, 0, 0, n+1, i, j);
-}
-
-int seg[2][4*N];
-
 
 int main() {
   ios::sync_with_stdio(false);
@@ -72,12 +62,15 @@ int main() {
 
   cin >> x >> y;
 
-  update(seg[0], 0, 0);
-  update(seg[1], 0, 0);
+  build(0, 0, n+1, 0);
+  build(0, 0, n+1, 1);
+
+  update(0, 0, n+1, 0, 0, 0);
+  update(0, 0, n+1, 0, 0, 1);
 
   for (int i = 1; i <= n+1; i++) {
-    update(seg[0], i, inf);
-    update(seg[1], i, inf);
+    update(0, 0, n+1, i, inf, 0);
+    update(0, 0, n+1, i, inf, 1);
   }
 
   for (int i = 1; i <= n+1; i++) {
@@ -85,15 +78,18 @@ int main() {
     int k = lower_bound(skip, skip+i, skip[i] - y) - skip;
 
     if (j < i) {
-      update(seg[0], i, 1 + min(query(seg[0], j, i-1), query(seg[1], j, i-1)));
+      update(0, 0, n+1, i, 
+          1 + min(query(0, 0, n+1, j, i-1, 0), 
+            query(0, 0, n+1, j, i-1, 1)), 0);
     }
 
     if (k < i) {
-      update(seg[1], i, 1 + query(seg[0], k, i-1));
+      update(0, 0, n+1, i, 1 + query(0, 0, n+1, k, i-1, 0), 1);
     }
   }
 
-  int64_t ans = min(query(seg[0], n+1, n+1), query(seg[1], n+1, n+1));
+  int64_t ans = min(query(0, 0, n+1, n+1, n+1, 0), 
+      query(0, 0, n+1, n+1, n+1, 1));
 
   cout << (ans >= inf ? -1 : ans) << "\n";
   return 0;
