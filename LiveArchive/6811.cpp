@@ -1,16 +1,14 @@
-// Spoj - Fast Maximum Matching - MATCHING
-// Augmenting Path for MCBM
+// Live Archive - Irrigation Lines - 6811
 #include <bits/stdc++.h>
 using namespace std;
 
-const int N = 100100;
+const int K = 100;
+const int N = 2*K+10;
 vector<int> g[N];
 int match[N], lmatch[N];
 bool visited[N];
 
 int augment(int v) {
-  assert(0 <= v && v < N);
-
   if (visited[v]) return 0;
   visited[v] = true;
 
@@ -64,33 +62,40 @@ int matching(int left_sz) {
   return mcmb;
 }
 
-int getCow(int i) {
-  return i;
-}
-
-const int C = 50010;
-int getBull(int i) {
-  return C + i;
-}
-
 int main() {
   ios::sync_with_stdio(false);
   cin.tie(nullptr);
+  cout.tie(nullptr);
 
-  int n, m, p;
+  int t, m, n;
+  char ch;
 
-  cin >> n >> m >> p;
+  cin >> t;
 
-  for (int i = 0, a, b; i < p; i++) {
-    cin >> a >> b;
-    a--;
-    b--;
+  for (int ti = 1; ti <= t; ti++) {
+    cin >> m >> n;
+    for (int v = 0; v < n+m; v++)
+      g[v].clear();
 
-    g[getCow(a)].push_back(getBull(b));
-    g[getBull(b)].push_back(getCow(a));
+    auto left = [](int i) {
+      return i;
+    };
+    auto right= [m](int i) {
+      return m + i;
+    };
+
+    for (int i = 0; i < m; i++) {
+      for (int j = 0; j < n; j++) {
+        cin >> ch;
+
+        if (ch == '1') {
+          g[left(i)].push_back(right(j));
+          g[right(j)].push_back(left(i));
+        }
+      }
+    }
+
+    cout << "Case #" << ti << ": " << matching(m) << "\n";
   }
-
-  cout << matching(n) << "\n";
-
   return 0;
 }
