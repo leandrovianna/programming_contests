@@ -1,4 +1,3 @@
-// Lib - Suffix Automata
 // Spoj - Lexicographical Substring Search - SUBLEX
 #include <bits/stdc++.h>
 using namespace std;
