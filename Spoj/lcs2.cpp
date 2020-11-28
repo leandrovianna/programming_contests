@@ -1,4 +1,4 @@
-// Lib - Suffix Array - Linear Time (O(n)) construction 
+// Spoj - Longest Common Substring II - LCS2 (AC with clang)
 #include <bits/stdc++.h>
 using namespace std;
 
@@ -89,12 +89,13 @@ void suffixArray(int* s, int* SA, int n, int K) {
   delete [] s12; delete [] SA12; delete [] SA0; delete [] s0;
 }
 
-const int N = 400100, M = 400;
-const int K = 20;
+const int N = 2000100, E = 260;
+const int K = 22;
 int lg[N+1];
 int st[N][K+1];
+int st2[N][K+1];
 
-void lcp_construction(int *s, int n, int *sa, int *rnk, int *lcp) {
+void lcp_construction(int *s, int n, int *sa, int *rnk, int *lcp, int *mask) {
   for (int i = 0; i < n; i++) {
     rnk[sa[i]] = i;
   }
@@ -122,12 +123,16 @@ void lcp_construction(int *s, int n, int *sa, int *rnk, int *lcp) {
   for (int i = 2; i <= N; i++)
     lg[i] = lg[i/2] + 1;
 
-  for (int i = 0; i < n-1; i++)
+  for (int i = 0; i < n; i++) {
     st[i][0] = lcp[i];
+    st2[i][0] = mask[i];
+  }
 
   for (int j = 1; j <= K; j++)
-    for (int i = 0; i + (1 << j) <= n-1; i++)
+    for (int i = 0; i + (1 << j) <= n; i++) {
       st[i][j] = min(st[i][j-1], st[i + (1 << (j - 1))][j - 1]);
+      st2[i][j] = st2[i][j-1] | st2[i + (1 << (j - 1))][j - 1];
+    }
 }
 
 int lcp_query(int l, int r) {
@@ -136,48 +141,70 @@ int lcp_query(int l, int r) {
   return min(st[l][j], st[r - (1 << j) + 1][j]);
 }
 
-int basestr[N], sa[N], rnk[N], lcp[N];
-char s[N];
-
-int main() {
-  int n;
-
-  scanf("%d", &n);
-
-  for (int i = 0; i < n; i++) {
-    int64_t m = 0;
-    scanf("%s", s);
-    m = strlen(s);
-
-    for (int i = 0; i < m; i++) {
-      basestr[i] = s[i];
-    }
-
-    suffixArray(basestr, sa, m, M);
-    lcp_construction(basestr, m, sa, rnk, lcp);
-
-#ifndef ONLINE_JUDGE
-    for (int i = 0; i < m; i++) {
-      cout << i << ": (" << sa[i] << ") ";
-      int j = sa[i];
-      while (j < m) {
-        cout << static_cast<char>(basestr[j]);
-        if (basestr[j] == '$')
-          break;
-        j++;
-      }
-      cout << endl;
-    }
-#endif
-
-    int64_t ans = (m * m + m) / 2;
-
-    for (int i = 0; i < m-1; i++) {
-      ans -= lcp[i];
-    }
-
-    cout << ans << "\n";
-  }
-  return 0;
+int mask_query(int l, int r) {
+  assert(l <= r);
+  int j = lg[r - l + 1];
+  return st2[l][j] | st2[r - (1 << j) + 1][j];
 }
 
+int basestr[N], sa[N], rnk[N], lcp[N], mask[N], id[N];
+
+int main() {
+  ios::sync_with_stdio(false);
+  cin.tie(nullptr);
+  cout.tie(nullptr);
+
+  int k = 0;
+  string s;
+
+  int sz = 0;
+  while (getline(cin, s)) {
+    for (const auto &ch : s) {
+      id[sz] = k;
+      basestr[sz++] = ch;
+    }
+    id[sz] = k;
+    basestr[sz++] = '!' + k;
+    k++;
+  }
+
+  suffixArray(basestr, sa, sz, E);
+
+  for (int i = 0; i < sz; i++) {
+    mask[i] = 1 << id[sa[i]];
+  }
+
+  lcp_construction(basestr, sz, sa, rnk, lcp, mask);
+
+#ifndef ONLINE_JUDGE
+  for (int i = 0; i < sz; i++) {
+    cout << i << ": (" << sa[i] << ") ";
+    int j = sa[i];
+    while (j < sz) {
+      cout << static_cast<char>(basestr[j]);
+      j++;
+    }
+    cout << " " << mask[i];
+    cout << endl;
+  }
+#endif
+
+  int ans = 0;
+  for (int i = 0; i < sz-1; i++) {
+    int lo = i+1, hi = sz-1, mid;
+    while (lo <= hi) {
+      mid = (lo + hi) / 2;
+
+      int m = mask_query(i, mid);
+      if (__builtin_popcount(m) == k) {
+        ans = max(ans, lcp_query(i, mid-1));
+        hi = mid-1;
+      } else {
+        lo = mid+1;
+      }
+    }
+  }
+
+  cout << ans << "\n";
+  return 0;
+}
